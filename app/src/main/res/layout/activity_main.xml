@@ -14,7 +14,8 @@
         android:id="@+id/button"
         android:background="#00ffffff"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#00f7ff" />
 
     <Button
         android:layout_width="wrap_content"
@@ -23,7 +24,8 @@
         android:id="@+id/button2"
         android:layout_alignTop="@+id/button"
         android:layout_alignParentEnd="true"
-        android:background="#00ffffff" />
+        android:background="#00ffffff"
+        android:textColor="#00f7ff" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,7 +34,8 @@
         android:text="Medium Text"
         android:id="@+id/textView"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#00f7ff" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -42,7 +45,8 @@
         android:id="@+id/editText"
         android:text="500"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:textColor="#00f7ff" />
 
     <Button
         android:layout_width="wrap_content"
@@ -58,5 +62,35 @@
         android:id="@+id/imageView"
         android:layout_alignBottom="@+id/button2"
         android:layout_alignStart="@+id/editText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textView2"
+        android:textColor="#00f7ff"
+        android:layout_above="@+id/textView"
+        android:layout_alignEnd="@+id/button2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textView3"
+        android:layout_above="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"
+        android:textColor="#ffbf00" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textView4"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignStart="@+id/textView2"
+        android:textColor="#ffbf00" />
 
 </RelativeLayout>

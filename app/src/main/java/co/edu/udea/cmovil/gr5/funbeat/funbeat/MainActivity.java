@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         final Button boton2 = (Button) findViewById(R.id.button2);
         final Button boton3 = (Button) findViewById(R.id.button3);
         final TextView muestratiempo = (TextView) findViewById(R.id.textView);
+        final TextView tiempoPresion = (TextView) findViewById(R.id.textView2);
+        final TextView tiempoMin = (TextView) findViewById(R.id.textView3);
+        final TextView tiempoMax = (TextView) findViewById(R.id.textView4);
         final ImageView personaje = (ImageView) findViewById(R.id.imageView);
 
 
@@ -84,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
                         mSoundPool.stop(0);
                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(SOUND_FX_02), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
+                        tiempoMin.setText(""+ (ultimotiempo+velocidad-buffer));
+                        tiempoPresion.setText(""+System.currentTimeMillis());
+                        tiempoMax.setText(""+(ultimotiempo+velocidad+buffer));
                         if (System.currentTimeMillis() > ultimotiempo+velocidad-buffer &&  System.currentTimeMillis() < ultimotiempo+velocidad+buffer ){
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
@@ -116,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
                         mSoundPool.stop(0);
                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(SOUND_FX_01), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
+                        tiempoMin.setText("" + (ultimotiempo + velocidad - buffer));
+                        tiempoPresion.setText(""+System.currentTimeMillis());
+                        tiempoMax.setText(""+(ultimotiempo+velocidad+buffer));
                         if (System.currentTimeMillis() > ultimotiempo+velocidad-buffer &&  System.currentTimeMillis() < ultimotiempo+velocidad+buffer ){
                             //acierto
                             personaje.setImageResource(R.drawable.icono2);
