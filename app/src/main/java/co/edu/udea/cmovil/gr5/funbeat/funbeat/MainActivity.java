@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ import java.util.TimerTask;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity /*implements View.OnTouchListener*/ {
 
     //definiciones utiles para el soundpool
     private  int mStream1 = 0;
@@ -35,10 +37,20 @@ public class MainActivity extends AppCompatActivity {
     long ultimotiempo = 0;
     long penultimoTiempo = 0;
 
-
+    //velocidad del metronomo, y tamaño del buffer para la dificultad, en este momento se modifican desde la pantalla.
     int velocidad;
     int buffer;
 
+    //variables para mover el personaje en pantalla
+    ImageView personaje;
+    private ViewGroup mRrootLayout;
+    private int _xDelta;
+    private int _yDelta;
+
+    private TextView muestraX;
+    private TextView muestraY;
+
+    int ticks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        final Timer[] timer = {new Timer()};
+        final Timer[] timer = new Timer[2];
 
 
         //inicializacion del soundpool
@@ -69,8 +81,20 @@ public class MainActivity extends AppCompatActivity {
         final TextView tiempoPresion = (TextView) findViewById(R.id.textView2);
         final TextView tiempoMin = (TextView) findViewById(R.id.textView3);
         final TextView tiempoMax = (TextView) findViewById(R.id.textView4);
-        final ImageView personaje = (ImageView) findViewById(R.id.imageView);
+        final TextView muestraMilis = (TextView) findViewById(R.id.textView5);
         final EditText editBuffer = (EditText) findViewById(R.id.editText2);
+
+        //para arrastrar el personaje en pantalla
+        muestraX = (TextView) findViewById(R.id.textViewX);
+        muestraY = (TextView) findViewById(R.id.textViewY);
+        personaje = (ImageView) findViewById(R.id.imageView);
+        mRrootLayout = (ViewGroup) findViewById(R.id.root);
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(250,250);
+        personaje.setLayoutParams(layoutParams);
+
+        /*para usar con el implements, para manejar el evento desde afuera descomentar esta linea, el implements y el metodo onTouch al final. */
+        //personaje.setOnTouchListener(this);
 
 
         buffer = Integer.parseInt(editBuffer.getText().toString());
@@ -92,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         tiempoMin.setText("" + (ultimotiempo + velocidad - buffer));
                         tiempoPresion.setText("" + System.currentTimeMillis());
                         tiempoMax.setText("" + (ultimotiempo + velocidad + buffer));
+
                         if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
@@ -116,43 +141,43 @@ public class MainActivity extends AppCompatActivity {
         });
 
         boton2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+                                      @Override
+                                      public boolean onTouch(View v, MotionEvent event) {
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                        streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                                          switch (event.getAction()) {
+                                              case MotionEvent.ACTION_DOWN:
+                                                  // PRESSED
+                                                  float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                                  streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-                        mSoundPool.stop(0);
-                        mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(SOUND_FX_01), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                  mSoundPool.stop(0);
+                                                  mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(SOUND_FX_01), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
-                        tiempoMin.setText("" + (ultimotiempo + velocidad - buffer));
-                        tiempoPresion.setText("" + System.currentTimeMillis());
-                        tiempoMax.setText("" + (ultimotiempo + velocidad + buffer));
-                        if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
-                            //acierto
-                            personaje.setImageResource(R.drawable.icono2);
-                        } else {
-                            if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
-                                personaje.setImageResource(R.drawable.icono2);
-                            }else {
-                                //fallo
-                                personaje.setImageResource(R.drawable.iconotriste);
-                            }
-                            }
-                            return true; // if you want to handle the touch event
-                            case MotionEvent.ACTION_UP:
-                                // RELEASED
+                                                  tiempoMin.setText("" + (ultimotiempo + velocidad - buffer));
+                                                  tiempoPresion.setText("" + System.currentTimeMillis());
+                                                  tiempoMax.setText("" + (ultimotiempo + velocidad + buffer));
+                                                  if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
+                                                      //acierto
+                                                      personaje.setImageResource(R.drawable.icono2);
+                                                  } else {
+                                                      if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
+                                                          personaje.setImageResource(R.drawable.icono2);
+                                                      } else {
+                                                          //fallo
+                                                          personaje.setImageResource(R.drawable.iconotriste);
+                                                      }
+                                                  }
+                                                  return true; // if you want to handle the touch event
+                                              case MotionEvent.ACTION_UP:
+                                                  // RELEASED
 
-                                return true; // if you want to handle the touch event
-                        }
-                        return false;
-                }
-            }
+                                                  return true; // if you want to handle the touch event
+                                          }
+                                          return false;
+                                      }
+                                  }
 
-            );
+        );
 
             botonMetronomo.setOnClickListener(new View.OnClickListener()
 
@@ -164,7 +189,10 @@ public class MainActivity extends AppCompatActivity {
 
                                                           EditText velo = (EditText) findViewById(R.id.editText);
                                                           //para cambiar la velocidad
-                                                          velocidad = Integer.parseInt(velo.getText().toString());
+                                                          //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
+                                                          velocidad = 60000 / (Integer.parseInt(velo.getText().toString()));
+
+                                                          muestraMilis.setText("milis: " + velocidad);
 
 
                                                           timer[0] = new Timer();
@@ -215,7 +243,102 @@ public class MainActivity extends AppCompatActivity {
             );
 
 
+
+        personaje.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        final int X = (int) event.getRawX();
+                        final int Y = (int) event.getRawY();
+                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                            case MotionEvent.ACTION_DOWN:
+                                RelativeLayout.LayoutParams lParams = (
+                                        RelativeLayout.LayoutParams) view.getLayoutParams();
+                                _xDelta = X - lParams.leftMargin;
+                                _yDelta = Y - lParams.topMargin;
+                                personaje.setImageResource(R.drawable.iconoo);
+                                ticks = 0;
+                                timer[1] = new Timer();
+                                final TimerTask myTask2 = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //aqui cada segundo
+
+                                                ticks++;
+                                                if(ticks % 2 == 0){
+                                                    personaje.setImageResource(R.drawable.iconoo);
+                                                }else {
+                                                    personaje.setImageResource(R.drawable.iconoo2);
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                };
+                                timer[1].schedule(myTask2, 100, 100);
+
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
+                                        .getLayoutParams();
+                                layoutParams.leftMargin = X - _xDelta;
+                                layoutParams.topMargin = Y - _yDelta;
+                                layoutParams.rightMargin = -250;
+                                layoutParams.bottomMargin = -250;
+                                view.setLayoutParams(layoutParams);
+                                muestraX.setText("X= " + X);
+                                muestraY.setText("Y= " + Y);
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                timer[1].cancel();
+                                personaje.setImageResource(R.drawable.iconoidle);
+
+                                break;
+                        }
+                        mRrootLayout.invalidate();
+                        return true;
+                    }
+                }
+        );
+
+
+
+    }
+/*
+    public boolean onTouch(View view, MotionEvent event){
+        final int X = (int) event.getRawX();
+        final int Y = (int) event.getRawY();
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                RelativeLayout.LayoutParams lParams = (
+                        RelativeLayout.LayoutParams) view.getLayoutParams();
+                _xDelta = X - lParams.leftMargin;
+                _yDelta = Y - lParams.topMargin;
+                personaje.setImageResource(R.drawable.iconoo);
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
+                        .getLayoutParams();
+                layoutParams.leftMargin = X - _xDelta;
+                layoutParams.topMargin = Y - _yDelta;
+                layoutParams.rightMargin = -250;
+                layoutParams.bottomMargin = -250;
+                view.setLayoutParams(layoutParams);
+                muestraX.setText("X= "+ X);
+                muestraY.setText("Y= "+ Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                personaje.setImageResource(R.drawable.iconoidle);
+                break;
         }
+        mRrootLayout.invalidate();
+        return true;
+    }
+    */
 
     }
 
