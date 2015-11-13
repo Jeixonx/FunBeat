@@ -146,4 +146,12 @@
         android:layout_alignParentStart="true"
         android:textColor="#00f7ff" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button5"
+        android:layout_above="@+id/textViewX"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>
