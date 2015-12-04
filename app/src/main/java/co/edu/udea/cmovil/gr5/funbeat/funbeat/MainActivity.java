@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
 
         //definicion logica de la gui
-        Button boton1 = (Button) findViewById(R.id.button);
+        final Button boton1 = (Button) findViewById(R.id.button);
         final Button boton2 = (Button) findViewById(R.id.button2);
         final Button botonMetronomo = (Button) findViewById(R.id.button3);
         final Button botonBuffer = (Button) findViewById(R.id.button4);
@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
         final TextView tiempoMax = (TextView) findViewById(R.id.textView4);
         final TextView muestraMilis = (TextView) findViewById(R.id.textView5);
         final EditText editBuffer = (EditText) findViewById(R.id.editText2);
-
+        final Button jugar1 = (Button) findViewById(R.id.button5);
+        final Button conf = (Button) findViewById(R.id.button6);
         //para arrastrar el personaje en pantalla
         muestraX = (TextView) findViewById(R.id.textViewX);
         muestraY = (TextView) findViewById(R.id.textViewY);
@@ -242,6 +243,43 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
             );
 
+        conf.setOnClickListener(new View.OnClickListener()
+
+                                {
+                                    @Override
+                                    public void onClick(View v) {
+                                        boton1.setVisibility(View.VISIBLE);
+                                        boton2.setVisibility(View.VISIBLE);
+                                        botonMetronomo.setVisibility(View.VISIBLE);
+                                        botonBuffer.setVisibility(View.VISIBLE);
+                                        muestratiempo.setVisibility(View.VISIBLE);
+                                        tiempoPresion.setVisibility(View.VISIBLE);
+                                        tiempoMin.setVisibility(View.VISIBLE);
+                                        tiempoMax.setVisibility(View.VISIBLE);
+                                        muestraMilis.setVisibility(View.VISIBLE);
+                                        editBuffer.setVisibility(View.VISIBLE);
+                                        final Button jugar1 = (Button) findViewById(R.id.button5);
+                                        final Button conf = (Button) findViewById(R.id.button6);
+                                    }
+
+                                }
+
+        );
+
+        jugar1.setOnClickListener(new View.OnClickListener()
+
+                                       {
+                                           @Override
+                                           public void onClick(View v) {
+                                               jugar1.setVisibility(View.INVISIBLE);
+                                               conf.setVisibility(View.INVISIBLE);
+                                               boton1.setVisibility(View.VISIBLE);
+                                               boton2.setVisibility(View.VISIBLE);
+                                           }
+
+                                       }
+
+        );
 
 
         personaje.setOnTouchListener(
