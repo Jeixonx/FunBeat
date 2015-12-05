@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,7 +51,28 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
     private TextView muestraX;
     private TextView muestraY;
 
+    //variables gui
+
+    Button boton1;
+    Button boton2;
+    Button botonMetronomo;
+    Button botonBuffer;
+    TextView muestratiempo;
+    TextView tiempoPresion;
+    TextView tiempoMin;
+    TextView tiempoMax;
+    TextView muestraMilis;
+    EditText velo;
+    EditText editBuffer;
+    Button jugar1;
+    Button conf;
+    ImageView blue;
+    ImageView green;
+
     int ticks;
+    boolean esperando;
+    boolean esperando2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,32 +84,34 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
 
         //inicializacion del soundpool
-        final SoundPool mSoundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+        final SoundPool mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
         final AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         final HashMap mSoundPoolMap = new HashMap();
 
         mSoundPoolMap.put(1, mSoundPool.load(this, R.raw.bluefoot, 1));
         mSoundPoolMap.put(2, mSoundPool.load(this, R.raw.snare, 1));
         mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.jamblock, 1));
+        mSoundPoolMap.put(4, mSoundPool.load(this, R.raw.go, 1));
+
 
 
 
         //definicion logica de la gui
-        final Button boton1 = (Button) findViewById(R.id.button);
-        final Button boton2 = (Button) findViewById(R.id.button2);
-        final Button botonMetronomo = (Button) findViewById(R.id.button3);
-        final Button botonBuffer = (Button) findViewById(R.id.button4);
-        final TextView muestratiempo = (TextView) findViewById(R.id.textView);
-        final TextView tiempoPresion = (TextView) findViewById(R.id.textView2);
-        final TextView tiempoMin = (TextView) findViewById(R.id.textView3);
-        final TextView tiempoMax = (TextView) findViewById(R.id.textView4);
-        final TextView muestraMilis = (TextView) findViewById(R.id.textView5);
-        final EditText velo = (EditText) findViewById(R.id.editText);
+        boton1 = (Button) findViewById(R.id.button);
+        boton2 = (Button) findViewById(R.id.button2);
+        botonMetronomo = (Button) findViewById(R.id.button3);
+        botonBuffer = (Button) findViewById(R.id.button4);
+        muestratiempo = (TextView) findViewById(R.id.textView);
+        tiempoPresion = (TextView) findViewById(R.id.textView2);
+        tiempoMin = (TextView) findViewById(R.id.textView3);
+        tiempoMax = (TextView) findViewById(R.id.textView4);
+        muestraMilis = (TextView) findViewById(R.id.textView5);
+        velo = (EditText) findViewById(R.id.editText);
         final EditText editBuffer = (EditText) findViewById(R.id.editText2);
         final Button jugar1 = (Button) findViewById(R.id.button5);
-        final Button conf = (Button) findViewById(R.id.button6);
-        final ImageView blue = (ImageView) findViewById(R.id.imgblue);
-        final ImageView green = (ImageView) findViewById(R.id.imggreen);
+        conf = (Button) findViewById(R.id.button6);
+        blue = (ImageView) findViewById(R.id.imgblue);
+        green = (ImageView) findViewById(R.id.imggreen);
 
         //para arrastrar el personaje en pantalla
         muestraX = (TextView) findViewById(R.id.textViewX);
@@ -276,19 +300,25 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
              @Override
              public void onClick(View v) {
-                                               jugar1.setVisibility(View.INVISIBLE);
-                                               conf.setVisibility(View.INVISIBLE);
-                                               //boton1.setVisibility(View.VISIBLE);
-                                               //boton2.setVisibility(View.VISIBLE);
-                                               personaje.setVisibility(View.VISIBLE);
-                                               jugar1.setVisibility(View.INVISIBLE);
-                                               conf.setVisibility(View.INVISIBLE);
-                                                blue.setVisibility(View.VISIBLE);
-                                                green.setVisibility(View.VISIBLE);
 
-                                                blue.setImageResource(R.drawable.bblue);
-                                                green.setImageResource(R.drawable.bgreen);
+                 jugar1.setVisibility(View.INVISIBLE);
+                 conf.setVisibility(View.INVISIBLE);
+                 //boton1.setVisibility(View.VISIBLE);
+                 //boton2.setVisibility(View.VISIBLE);
+                 personaje.setVisibility(View.VISIBLE);
+                 jugar1.setVisibility(View.INVISIBLE);
+                 conf.setVisibility(View.INVISIBLE);
+                 blue.setVisibility(View.VISIBLE);
+                 green.setVisibility(View.VISIBLE);
 
+                 blue.setImageResource(R.drawable.bblue);
+                 green.setImageResource(R.drawable.bgreen);
+
+
+                 final Integer[] ticksInactivo = {0};
+                 final Random r = new Random();
+                 final int[] r1 = {r.nextInt(5 - 2 + 1) + 2};
+                 //int i1 = r.nextInt(max - min + 1) + min;
 
                  if (!isTimerOn) {
 
@@ -308,11 +338,40 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                  @Override
                                  public void run() {
                                      //aqui cada segundo
-                                     float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                     streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                                     ticksInactivo[0]++;
+                                     if(r1[0] == ticksInactivo[0]){
 
-                                     mSoundPool.stop(0);
-                                     mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+                                         mSoundPool.stop(0);
+                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                         ticksInactivo[0] = 0;
+                                         r1[0] = r.nextInt(5 - 2 + 1) + 2;
+
+                                         personaje.setImageResource(R.drawable.iconogo);
+
+                                         esperando = true;
+                                         esperando2 = true;
+
+                                     }else{
+                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+                                         mSoundPool.stop(0);
+                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+
+                                         personaje.setImageResource(R.drawable.iconomedio);
+
+                                         if(!esperando2){
+                                             esperando = false;
+                                         }
+                                         esperando2 = false;
+
+
+                                     }
+
+
 
                                      penultimoTiempo = ultimotiempo;
                                      ultimotiempo = System.currentTimeMillis();
@@ -397,11 +456,11 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                  tiempoMin.setText("" + (ultimotiempo + velocidad - buffer));
                                                  tiempoPresion.setText("" + System.currentTimeMillis());
                                                  tiempoMax.setText("" + (ultimotiempo + velocidad + buffer));
-                                                 if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
+                                                 if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperando) {
                                                      //acierto
                                                      personaje.setImageResource(R.drawable.icono2);
                                                  } else {
-                                                     if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
+                                                     if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperando) {
                                                          personaje.setImageResource(R.drawable.icono2);
                                                      } else {
                                                          //fallo
@@ -445,9 +504,9 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                 //aqui cada segundo
 
                                                 ticks++;
-                                                if(ticks % 2 == 0){
+                                                if (ticks % 2 == 0) {
                                                     personaje.setImageResource(R.drawable.iconoo);
-                                                }else {
+                                                } else {
                                                     personaje.setImageResource(R.drawable.iconoo2);
                                                 }
 
