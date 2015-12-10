@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
     int ticks;
     boolean esperando;
     boolean esperando2;
+    boolean esperandoblue;
+    boolean esperandoblue2;
 
 
     @Override
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
 
         //inicializacion del soundpool
-        final SoundPool mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+        final SoundPool mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         final AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         final HashMap mSoundPoolMap = new HashMap();
 
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
         mSoundPoolMap.put(2, mSoundPool.load(this, R.raw.snare, 1));
         mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.jamblock, 1));
         mSoundPoolMap.put(4, mSoundPool.load(this, R.raw.go, 1));
+        mSoundPoolMap.put(5, mSoundPool.load(this, R.raw.meeb, 1));
 
 
 
@@ -317,7 +320,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
                  final Integer[] ticksInactivo = {0};
                  final Random r = new Random();
-                 final int[] r1 = {r.nextInt(5 - 2 + 1) + 2};
+                 final int[] r1 = new int[2];
+                 r1[0] = r.nextInt(5 - 2 + 1) + 2;
                  //int i1 = r.nextInt(max - min + 1) + min;
 
                  if (!isTimerOn) {
@@ -345,29 +349,45 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                          streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
                                          mSoundPool.stop(0);
-                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                          ticksInactivo[0] = 0;
                                          r1[0] = r.nextInt(5 - 2 + 1) + 2;
+                                         r1[1] = r.nextInt(2 - 1 + 1) + 1;
 
-                                         personaje.setImageResource(R.drawable.iconogo);
+                                         if(r1[1]==1) {
+                                             personaje.setImageResource(R.drawable.iconogo);
+                                             mSoundPool.stop(0);
+                                             mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                             esperando = true;
+                                             esperando2 = true;
+                                         }else{
+                                             personaje.setImageResource(R.drawable.iconomeep);
+                                             mSoundPool.stop(0);
+                                             mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(5), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                             esperandoblue = true;
+                                             esperandoblue2 = true;
+                                         }
 
-                                         esperando = true;
-                                         esperando2 = true;
 
-                                     }else{
+
+                                     }else {
                                          float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                                          streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
                                          mSoundPool.stop(0);
                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
-                                         personaje.setImageResource(R.drawable.iconomedio);
+                                         //personaje.setImageResource(R.drawable.iconomedio);
 
-                                         if(!esperando2){
+                                         if (!esperando2) {
                                              esperando = false;
                                          }
                                          esperando2 = false;
 
+                                         if(!esperandoblue2){
+                                             esperandoblue = false;
+                                         }
+                                         esperandoblue2 = false;
 
                                      }
 
@@ -414,11 +434,11 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         tiempoPresion.setText("" + System.currentTimeMillis());
                         tiempoMax.setText("" + (ultimotiempo + velocidad + buffer));
 
-                        if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
+                        if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperandoblue) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
                         } else {
-                            if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
+                            if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperandoblue) {
                                 personaje.setImageResource(R.drawable.icono);
                             } else {
                                 //fallo
