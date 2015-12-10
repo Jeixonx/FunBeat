@@ -194,4 +194,60 @@
         android:layout_above="@+id/textViewX"
         android:layout_alignEnd="@+id/button2" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="x0"
+        android:id="@+id/combotxt"
+        android:textColor="#ffffff"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/editText"
+        android:textSize="40dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:background="@mipmap/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="3"
+        android:id="@+id/vidastxt"
+        android:layout_alignParentTop="true"
+        android:textColor="#ffffff"
+        android:layout_alignEnd="@+id/button"
+        android:textSize="40dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/puntostxt"
+        android:layout_below="@+id/editText"
+        android:textColor="#ffffff"
+        android:textIsSelectable="false"
+        android:textSize="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:textAlignment="textEnd"
+        android:layout_alignStart="@+id/imggreen" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Nivel 1"
+        android:id="@+id/niveltxt"
+        android:layout_alignTop="@+id/editText2"
+        android:layout_alignParentStart="true"
+        android:textColor="#ffffff"
+        android:textSize="25dp" />
+
 </RelativeLayout>

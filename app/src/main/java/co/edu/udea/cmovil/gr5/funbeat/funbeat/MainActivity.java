@@ -68,12 +68,23 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
     Button conf;
     ImageView blue;
     ImageView green;
+    TextView combo;
+    TextView vidas;
+    TextView puntos;
+    TextView nivel;
 
     int ticks;
     boolean esperando;
     boolean esperando2;
     boolean esperandoblue;
     boolean esperandoblue2;
+    boolean acierto;
+    boolean sgtnivel = false;
+    int comboint = 1;
+    int vidasint = 3;
+    int puntosint = 0;
+    int nivelint = 1;
+    int tickslvl = 0;
 
 
     @Override
@@ -92,11 +103,12 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
         mSoundPoolMap.put(1, mSoundPool.load(this, R.raw.bluefoot, 1));
         mSoundPoolMap.put(2, mSoundPool.load(this, R.raw.snare, 1));
-        mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.jamblock, 1));
+        mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.hihat, 1));
         mSoundPoolMap.put(4, mSoundPool.load(this, R.raw.go, 1));
         mSoundPoolMap.put(5, mSoundPool.load(this, R.raw.meeb, 1));
-
-
+        mSoundPoolMap.put(6, mSoundPool.load(this, R.raw.boo, 1));
+        mSoundPoolMap.put(7, mSoundPool.load(this, R.raw.gameover, 1));
+        mSoundPoolMap.put(8, mSoundPool.load(this, R.raw.hurry, 1));
 
 
         //definicion logica de la gui
@@ -115,6 +127,10 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
         conf = (Button) findViewById(R.id.button6);
         blue = (ImageView) findViewById(R.id.imgblue);
         green = (ImageView) findViewById(R.id.imggreen);
+        combo = (TextView) findViewById(R.id.combotxt);
+        vidas = (TextView) findViewById(R.id.vidastxt);
+        puntos = (TextView) findViewById(R.id.puntostxt);
+        nivel = (TextView) findViewById(R.id.niveltxt);
 
         //para arrastrar el personaje en pantalla
         muestraX = (TextView) findViewById(R.id.textViewX);
@@ -291,7 +307,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                         editBuffer.setVisibility(View.VISIBLE);
                                         velo.setVisibility(View.VISIBLE);
                                         personaje.setVisibility(View.VISIBLE);
-                                        jugar1.setVisibility(View.INVISIBLE);
+                                        //jugar1.setVisibility(View.INVISIBLE);
                                         conf.setVisibility(View.INVISIBLE);
                                     }
 
@@ -314,6 +330,24 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                  blue.setVisibility(View.VISIBLE);
                  green.setVisibility(View.VISIBLE);
 
+                 boton1.setVisibility(View.INVISIBLE);
+                 boton2.setVisibility(View.INVISIBLE);
+                 botonMetronomo.setVisibility(View.INVISIBLE);
+                 botonBuffer.setVisibility(View.INVISIBLE);
+                 muestratiempo.setVisibility(View.INVISIBLE);
+                 tiempoPresion.setVisibility(View.INVISIBLE);
+                 tiempoMin.setVisibility(View.INVISIBLE);
+                 tiempoMax.setVisibility(View.INVISIBLE);
+                 muestraMilis.setVisibility(View.INVISIBLE);
+                 editBuffer.setVisibility(View.INVISIBLE);
+                 velo.setVisibility(View.INVISIBLE);
+
+                 blue.setVisibility(View.VISIBLE);
+                 green.setVisibility(View.VISIBLE);
+                 combo.setVisibility(View.VISIBLE);
+                 vidas.setVisibility(View.VISIBLE);
+                 puntos.setVisibility(View.VISIBLE);
+
                  blue.setImageResource(R.drawable.bblue);
                  green.setImageResource(R.drawable.bgreen);
 
@@ -324,13 +358,14 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                  r1[0] = r.nextInt(5 - 2 + 1) + 2;
                  //int i1 = r.nextInt(max - min + 1) + min;
 
-                 if (!isTimerOn) {
+                 if (!isTimerOn || sgtnivel) {
 
 
                      //para cambiar la velocidad
                      //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
-                     velocidad = 60000 / (Integer.parseInt(velo.getText().toString()));
 
+
+                     velocidad = 60000 / (Integer.parseInt(velo.getText().toString()) + (nivelint * 10));
                      muestraMilis.setText("milis: " + velocidad);
 
 
@@ -342,11 +377,40 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                  @Override
                                  public void run() {
                                      //aqui cada segundo
+                                     float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                     streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+                                     tickslvl++;
+                                     if(tickslvl>=50){
+                                         nivelint++;
+                                         sgtnivel = true;
+                                         mSoundPool.stop(0);
+                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(8), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                         nivel.setText("nivel "+nivelint);
+                                         timer[0].cancel();
+                                         jugar1.setVisibility(View.VISIBLE);
+                                         tickslvl = 0;
+
+
+                                     }
+
+                                     if (vidasint <= 0){ //GAME OVER
+                                         timer[0].cancel();
+                                         mSoundPool.stop(0);
+                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(7), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                         ponerInvisibles();
+                                         jugar1.setVisibility(View.VISIBLE);
+                                         conf.setVisibility(View.VISIBLE);
+                                         isTimerOn = false;
+                                         vidasint = 3;
+                                         comboint = 1;
+                                         puntosint = 0;
+
+                                     }
                                      ticksInactivo[0]++;
                                      if(r1[0] == ticksInactivo[0]){
 
-                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
 
                                          mSoundPool.stop(0);
                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
@@ -360,25 +424,29 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                              mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                              esperando = true;
                                              esperando2 = true;
+                                             green.setImageResource(R.drawable.bblack);
+
                                          }else{
                                              personaje.setImageResource(R.drawable.iconomeep);
                                              mSoundPool.stop(0);
                                              mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(5), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                              esperandoblue = true;
                                              esperandoblue2 = true;
+                                             blue.setImageResource(R.drawable.bblack);
                                          }
 
 
 
                                      }else {
-                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
                                          mSoundPool.stop(0);
                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
                                          //personaje.setImageResource(R.drawable.iconomedio);
-
+                                         if(!esperando2 && !esperandoblue2 && (esperando || esperandoblue ) && !acierto){
+                                             vidasint--;
+                                             vidas.setText(""+vidasint);
+                                         }
                                          if (!esperando2) {
                                              esperando = false;
                                          }
@@ -388,6 +456,9 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                              esperandoblue = false;
                                          }
                                          esperandoblue2 = false;
+
+                                         green.setImageResource(R.drawable.bgreen);
+                                         blue.setImageResource(R.drawable.bblue);
 
                                      }
 
@@ -404,12 +475,14 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                      //timer.schedule(myTask, 1000, 1000);
                      isTimerOn = true;
                  } else {
-                     timer[0].cancel();
-                     isTimerOn = false;
+
+                         timer[0].cancel();
+                         isTimerOn = false;
+
                  }
 
 
-             
+
              }
 
          }
@@ -422,6 +495,9 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // PRESSED
+
+
+
 
                         blue.setImageResource(R.drawable.byellow);
                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -437,15 +513,30 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperandoblue) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
+                            comboint++;
+                            acierto = true;
+                            puntosint = puntosint + (comboint*10);
                         } else {
                             if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperandoblue) {
                                 personaje.setImageResource(R.drawable.icono);
+                                comboint++;
+                                acierto = true;
+                                puntosint = puntosint + (comboint*10);
                             } else {
                                 //fallo
                                 personaje.setImageResource(R.drawable.iconotriste);
+
+                                mSoundPool.stop(0);
+                                mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                comboint = 0;
+                                //vidasint--;
+                                acierto = false;
+
                             }
                         }
-
+                        combo.setText("x" + comboint);
+                        vidas.setText("" + vidasint);
+                        puntos.setText("" + puntosint);
 
                         return true; // if you want to handle the touch event
                     case MotionEvent.ACTION_UP:
@@ -479,14 +570,30 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                  if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperando) {
                                                      //acierto
                                                      personaje.setImageResource(R.drawable.icono2);
+                                                     comboint++;
+                                                     acierto = true;
+                                                     puntosint = puntosint + (comboint*10);
                                                  } else {
                                                      if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperando) {
                                                          personaje.setImageResource(R.drawable.icono2);
+                                                         comboint++;
+                                                         acierto = true;
+                                                         puntosint = puntosint + (comboint*10);
                                                      } else {
                                                          //fallo
                                                          personaje.setImageResource(R.drawable.iconotriste);
+
+                                                         mSoundPool.stop(0);
+                                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                         comboint = 0;
+                                                        // vidasint--;
+                                                         acierto = false;
                                                      }
                                                  }
+                                                 combo.setText("x" + comboint);
+                                                 vidas.setText("" + vidasint);
+                                                 puntos.setText("" + puntosint);
+
                                                  return true; // if you want to handle the touch event
                                              case MotionEvent.ACTION_UP:
                                                  // RELEASED
@@ -508,13 +615,13 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         final int Y = (int) event.getRawY();
                         switch (event.getAction() & MotionEvent.ACTION_MASK) {
                             case MotionEvent.ACTION_DOWN:
-                                RelativeLayout.LayoutParams lParams = (
-                                        RelativeLayout.LayoutParams) view.getLayoutParams();
+                                RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                                 _xDelta = X - lParams.leftMargin;
                                 _yDelta = Y - lParams.topMargin;
                                 personaje.setImageResource(R.drawable.iconoo);
                                 ticks = 0;
                                 timer[1] = new Timer();
+
                                 final TimerTask myTask2 = new TimerTask() {
                                     @Override
                                     public void run() {
@@ -536,10 +643,26 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                 };
                                 timer[1].schedule(myTask2, 100, 100);
 
+
                                 break;
+
                             case MotionEvent.ACTION_MOVE:
-                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                                        .getLayoutParams();
+                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+                                if (X < 120) {
+                                    //_xDelta = 120 - layoutParams.leftMargin;
+                                    //timer[1].cancel();
+                                    personaje.setImageResource(R.drawable.paredizq);
+
+                                } else {
+                                    if (Y < 200) {
+                                        // _yDelta = Y - layoutParams.topMargin;
+                                        //timer[1].cancel();
+                                        personaje.setImageResource(R.drawable.paredarr);
+
+                                    }
+                                }
+
                                 layoutParams.leftMargin = X - _xDelta;
                                 layoutParams.topMargin = Y - _yDelta;
                                 layoutParams.rightMargin = -250;
@@ -551,7 +674,6 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                             case MotionEvent.ACTION_UP:
                                 timer[1].cancel();
                                 personaje.setImageResource(R.drawable.iconoidle);
-
                                 break;
                         }
                         mRrootLayout.invalidate();
@@ -564,6 +686,28 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
     }
 
+    private void ponerInvisibles(){
+        boton1.setVisibility(View.INVISIBLE);
+        boton2.setVisibility(View.INVISIBLE);
+        botonMetronomo.setVisibility(View.INVISIBLE);
+        botonBuffer.setVisibility(View.INVISIBLE);
+        muestratiempo.setVisibility(View.INVISIBLE);
+        tiempoPresion.setVisibility(View.INVISIBLE);
+        tiempoMin.setVisibility(View.INVISIBLE);
+        tiempoMax.setVisibility(View.INVISIBLE);
+        muestraMilis.setVisibility(View.INVISIBLE);
+        velo.setVisibility(View.INVISIBLE);
+//        editBuffer.setVisibility(View.INVISIBLE);
+
+
+        blue.setVisibility(View.INVISIBLE);
+        green.setVisibility(View.INVISIBLE);
+        combo.setVisibility(View.INVISIBLE);
+        vidas.setVisibility(View.INVISIBLE);
+        puntos.setVisibility(View.INVISIBLE);
+
+
+    }
 
 /*
     public boolean onTouch(View view, MotionEvent event){
