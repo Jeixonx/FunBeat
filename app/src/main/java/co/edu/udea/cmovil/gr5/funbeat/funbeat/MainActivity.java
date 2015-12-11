@@ -389,6 +389,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                          nivel.setText("nivel "+nivelint);
                                          timer[0].cancel();
                                          jugar1.setVisibility(View.VISIBLE);
+                                         blue.setVisibility(View.INVISIBLE);
+                                         green.setVisibility(View.INVISIBLE);
                                          tickslvl = 0;
 
 
