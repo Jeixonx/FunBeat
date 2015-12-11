@@ -407,6 +407,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                          vidasint = 3;
                                          comboint = 1;
                                          puntosint = 0;
+                                         nivelint =1;
+                                         nivel.setText("nivel " + nivelint);
 
                                      }
                                      ticksInactivo[0]++;
@@ -417,7 +419,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                          mSoundPool.stop(0);
                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                          ticksInactivo[0] = 0;
-                                         r1[0] = r.nextInt(5 - 2 + 1) + 2;
+                                         r1[0] = r.nextInt(4 - 2 + 1) + 2;
                                          r1[1] = r.nextInt(2 - 1 + 1) + 1;
 
                                          if(r1[1]==1) {
