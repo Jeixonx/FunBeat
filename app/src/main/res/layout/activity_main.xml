@@ -48,7 +48,7 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editText"
-        android:text="120"
+        android:text="80"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:textColor="#00f7ff"
@@ -67,6 +67,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
+        android:layout_alignBottom="@+id/button2"
+        android:layout_alignStart="@+id/editText"
+        android:foreground="@drawable/iconoidle"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewp2"
+        android:layout_alignBottom="@+id/button2"
+        android:layout_alignStart="@+id/editText"
+        android:foreground="@drawable/iconoidle"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewp3"
         android:layout_alignBottom="@+id/button2"
         android:layout_alignStart="@+id/editText"
         android:foreground="@drawable/iconoidle"
@@ -114,7 +132,7 @@
         android:layout_below="@+id/button3"
         android:layout_alignStart="@+id/editText"
         android:textColor="#00f7ff"
-        android:text="80"
+        android:text="100"
         android:visibility="invisible" />
 
     <Button

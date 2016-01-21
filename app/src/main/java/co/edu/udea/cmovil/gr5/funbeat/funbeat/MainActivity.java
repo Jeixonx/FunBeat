@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
     int buffer;
 
     //variables para mover el personaje en pantalla
-    ImageView personaje;
+    ImageView personaje, personaje2, personaje3;
     private ViewGroup mRrootLayout;
     private int _xDelta;
     private int _yDelta;
@@ -160,10 +160,26 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
         muestraX = (TextView) findViewById(R.id.textViewX);
         muestraY = (TextView) findViewById(R.id.textViewY);
         personaje = (ImageView) findViewById(R.id.imageView);
+        personaje2 = (ImageView) findViewById(R.id.imageViewp2);
+        personaje3 = (ImageView) findViewById(R.id.imageViewp3);
+
         mRrootLayout = (ViewGroup) findViewById(R.id.root);
 
+        personaje.setX(100);
+        personaje.setY(150);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(250,250);
         personaje.setLayoutParams(layoutParams);
+                personaje2.setX(200);
+        personaje2.setY(150);
+        layoutParams = new RelativeLayout.LayoutParams(250,250);
+        personaje2.setLayoutParams(layoutParams);
+
+        layoutParams = new RelativeLayout.LayoutParams(250,250);
+       personaje3.setLayoutParams(layoutParams);
+        personaje3.setX(300);
+        personaje3 .setY(150);
+
+
 
         /*para usar con el implements, para manejar el evento desde afuera descomentar esta linea, el implements y el metodo onTouch al final. */
         //personaje.setOnTouchListener(this);
@@ -192,12 +208,20 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
+                            personaje2.setImageResource(R.drawable.icono);
+                            personaje3.setImageResource(R.drawable.icono);
+
+
                         } else {
                             if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
                                 personaje.setImageResource(R.drawable.icono);
+                                personaje2.setImageResource(R.drawable.icono);
+                                personaje3.setImageResource(R.drawable.icono);
                             }else {
                                 //fallo
                                 personaje.setImageResource(R.drawable.iconotriste);
+                                personaje2.setImageResource(R.drawable.iconotriste);
+                                personaje3.setImageResource(R.drawable.iconotriste);
                             }
                         }
 
@@ -231,12 +255,18 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                   if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer) {
                                                       //acierto
                                                       personaje.setImageResource(R.drawable.icono2);
+                                                      personaje2.setImageResource(R.drawable.icono2);
+                                                      personaje3.setImageResource(R.drawable.icono2);
                                                   } else {
                                                       if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer) {
                                                           personaje.setImageResource(R.drawable.icono2);
+                                                          personaje2.setImageResource(R.drawable.icono2);
+                                                          personaje3.setImageResource(R.drawable.icono2);
                                                       } else {
                                                           //fallo
                                                           personaje.setImageResource(R.drawable.iconotriste);
+                                                          personaje2.setImageResource(R.drawable.iconotriste);
+                                                          personaje3.setImageResource(R.drawable.iconotriste);
                                                       }
                                                   }
                                                   return true; // if you want to handle the touch event
@@ -331,6 +361,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                         editBuffer.setVisibility(View.VISIBLE);
                                         velo.setVisibility(View.VISIBLE);
                                         personaje.setVisibility(View.VISIBLE);
+                                        personaje2.setVisibility(View.VISIBLE);
+                                        personaje3.setVisibility(View.VISIBLE);
                                         //jugar1.setVisibility(View.INVISIBLE);
                                         conf.setVisibility(View.INVISIBLE);
                                     }
@@ -348,7 +380,12 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                           conf.setVisibility(View.INVISIBLE);
                                           //boton1.setVisibility(View.VISIBLE);
                                           //boton2.setVisibility(View.VISIBLE);
+                                          if( vidasint >= 1)
                                           personaje.setVisibility(View.VISIBLE);
+                                          if( vidasint >= 2)
+                                          personaje2.setVisibility(View.VISIBLE);
+                                          if( vidasint >= 3)
+                                          personaje3.setVisibility(View.VISIBLE);
                                           jugar1.setVisibility(View.INVISIBLE);
                                           conf.setVisibility(View.INVISIBLE);
                                           blue.setVisibility(View.VISIBLE);
@@ -389,7 +426,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                               //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
 
 
-                                              velocidad = 60000 / (Integer.parseInt(velo.getText().toString()) + (nivelint * 10));
+                                              velocidad = 60000 / (Integer.parseInt(velo.getText().toString()) + (nivelint * 20));
                                               muestraMilis.setText("milis: " + velocidad);
 
 
@@ -432,6 +469,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                                   comboint = 1;
                                                                   puntosint = 0;
                                                                   nivelint =1;
+                                                                  acierto = true;
                                                                   nivel.setText("nivel " + nivelint);
 
                                                               }
@@ -448,6 +486,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
                                                                   if(r1[1]==1) {
                                                                       personaje.setImageResource(R.drawable.iconogo);
+                                                                      personaje2.setImageResource(R.drawable.iconogo);
+                                                                      personaje3.setImageResource(R.drawable.iconogo);
                                                                       mSoundPool.stop(0);
                                                                       mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                                                       esperando = true;
@@ -456,6 +496,8 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
                                                                   }else{
                                                                       personaje.setImageResource(R.drawable.iconomeep);
+                                                                      personaje2.setImageResource(R.drawable.iconomeep);
+                                                                      personaje3.setImageResource(R.drawable.iconomeep);
                                                                       mSoundPool.stop(0);
                                                                       mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(5), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                                                       esperandoblue = true;
@@ -471,7 +513,10 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                                   mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
 
                                                                   //personaje.setImageResource(R.drawable.iconomedio);
-                                                                  if(!esperando2 && !esperandoblue2 && (esperando || esperandoblue ) && !acierto){
+                                                                  if((!esperando2 || !esperandoblue2) && (esperando || esperandoblue ) && !acierto){
+                                                                      if (vidasint==3) personaje3.setVisibility(View.INVISIBLE);
+                                                                      if (vidasint==2) personaje2.setVisibility(View.INVISIBLE);
+                                                                      if (vidasint==1) personaje.setVisibility(View.INVISIBLE);
                                                                       vidasint--;
                                                                       vidas.setText(""+vidasint);
                                                                   }
@@ -525,8 +570,6 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         // PRESSED
 
 
-
-
                         blue.setImageResource(R.drawable.byellow);
                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -541,24 +584,33 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperandoblue) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
+                            personaje2.setImageResource(R.drawable.icono);
+                            personaje3.setImageResource(R.drawable.icono);
+
                             comboint++;
                             acierto = true;
-                            puntosint = puntosint + (comboint*10);
+                            puntosint = puntosint + (comboint * 10);
                         } else {
                             if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperandoblue) {
                                 personaje.setImageResource(R.drawable.icono);
+                                personaje2.setImageResource(R.drawable.icono);
+                                personaje3.setImageResource(R.drawable.icono);
                                 comboint++;
                                 acierto = true;
-                                puntosint = puntosint + (comboint*10);
+                                puntosint = puntosint + (comboint * 10);
                             } else {
                                 //fallo
                                 personaje.setImageResource(R.drawable.iconotriste);
+                                personaje2.setImageResource(R.drawable.iconotriste);
+                                personaje3.setImageResource(R.drawable.iconotriste);
 
                                 mSoundPool.stop(0);
                                 mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                 comboint = 0;
                                 //vidasint--;
                                 acierto = false;
+
+
 
                             }
                         }
@@ -598,24 +650,32 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                  if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperando) {
                                                      //acierto
                                                      personaje.setImageResource(R.drawable.icono2);
+                                                     personaje2.setImageResource(R.drawable.icono2);
+                                                     personaje3.setImageResource(R.drawable.icono2);
                                                      comboint++;
                                                      acierto = true;
                                                      puntosint = puntosint + (comboint*10);
                                                  } else {
                                                      if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperando) {
                                                          personaje.setImageResource(R.drawable.icono2);
+                                                         personaje2.setImageResource(R.drawable.icono2);
+                                                         personaje3.setImageResource(R.drawable.icono2);
                                                          comboint++;
                                                          acierto = true;
                                                          puntosint = puntosint + (comboint*10);
                                                      } else {
                                                          //fallo
                                                          personaje.setImageResource(R.drawable.iconotriste);
+                                                         personaje2.setImageResource(R.drawable.iconotriste);
+                                                         personaje3.setImageResource(R.drawable.iconotriste);
 
                                                          mSoundPool.stop(0);
                                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
                                                          comboint = 0;
                                                          // vidasint--;
                                                          acierto = false;
+
+
                                                      }
                                                  }
                                                  combo.setText("x" + comboint);
@@ -710,6 +770,155 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                 }
         );
 
+        personaje2.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        final int X = (int) event.getRawX();
+                        final int Y = (int) event.getRawY();
+                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                            case MotionEvent.ACTION_DOWN:
+                                RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                                _xDelta = X - lParams.leftMargin;
+                                _yDelta = Y - lParams.topMargin;
+                                personaje2.setImageResource(R.drawable.iconoo);
+                                ticks = 0;
+                                timer[1] = new Timer();
+
+                                final TimerTask myTask2 = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //aqui cada segundo
+
+                                                ticks++;
+                                                if (ticks % 2 == 0) {
+                                                    personaje2.setImageResource(R.drawable.iconoo);
+                                                } else {
+                                                    personaje2.setImageResource(R.drawable.iconoo2);
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                };
+                                timer[1].schedule(myTask2, 100, 100);
+
+
+                                break;
+
+                            case MotionEvent.ACTION_MOVE:
+                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+                                if (X < 120) {
+                                    //_xDelta = 120 - layoutParams.leftMargin;
+                                    //timer[1].cancel();
+                                    personaje2.setImageResource(R.drawable.paredizq);
+
+                                } else {
+                                    if (Y < 200) {
+                                        // _yDelta = Y - layoutParams.topMargin;
+                                        //timer[1].cancel();
+                                        personaje2.setImageResource(R.drawable.paredarr);
+
+                                    }
+                                }
+
+                                layoutParams.leftMargin = X - _xDelta;
+                                layoutParams.topMargin = Y - _yDelta;
+                                layoutParams.rightMargin = -250;
+                                layoutParams.bottomMargin = -250;
+                                view.setLayoutParams(layoutParams);
+                                muestraX.setText("X= " + X);
+                                muestraY.setText("Y= " + Y);
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                timer[1].cancel();
+                                personaje2.setImageResource(R.drawable.iconoidle);
+                                break;
+                        }
+                        mRrootLayout.invalidate();
+                        return true;
+                    }
+                }
+        );
+
+        personaje3.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        final int X = (int) event.getRawX();
+                        final int Y = (int) event.getRawY();
+                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                            case MotionEvent.ACTION_DOWN:
+                                RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                                _xDelta = X - lParams.leftMargin;
+                                _yDelta = Y - lParams.topMargin;
+                                personaje3.setImageResource(R.drawable.iconoo);
+                                ticks = 0;
+                                timer[1] = new Timer();
+
+                                final TimerTask myTask2 = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //aqui cada segundo
+
+                                                ticks++;
+                                                if (ticks % 2 == 0) {
+                                                    personaje3.setImageResource(R.drawable.iconoo);
+                                                } else {
+                                                    personaje3.setImageResource(R.drawable.iconoo2);
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                };
+                                timer[1].schedule(myTask2, 100, 100);
+
+
+                                break;
+
+                            case MotionEvent.ACTION_MOVE:
+                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+                                if (X < 120) {
+                                    //_xDelta = 120 - layoutParams.leftMargin;
+                                    //timer[1].cancel();
+                                    personaje3.setImageResource(R.drawable.paredizq);
+
+                                } else {
+                                    if (Y < 200) {
+                                        // _yDelta = Y - layoutParams.topMargin;
+                                        //timer[1].cancel();
+                                        personaje3.setImageResource(R.drawable.paredarr);
+
+                                    }
+                                }
+
+                                layoutParams.leftMargin = X - _xDelta;
+                                layoutParams.topMargin = Y - _yDelta;
+                                layoutParams.rightMargin = -250;
+                                layoutParams.bottomMargin = -250;
+                                view.setLayoutParams(layoutParams);
+                                muestraX.setText("X= " + X);
+                                muestraY.setText("Y= " + Y);
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                timer[1].cancel();
+                                personaje3.setImageResource(R.drawable.iconoidle);
+                                break;
+                        }
+                        mRrootLayout.invalidate();
+                        return true;
+                    }
+                }
+        );
     }
 
     private void ponerInvisibles(){
