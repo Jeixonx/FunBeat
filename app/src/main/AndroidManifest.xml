@@ -9,6 +9,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity android:name=".MainActivity" >
+
+        </activity>
+        <activity
+            android:name=".Ayuda"
+            android:label="Ayuda" >
+        </activity>
+        <activity
+            android:name=".Creditos"
+            android:label="Creditos" >
+        </activity>
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

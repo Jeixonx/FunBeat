@@ -1,10 +1,14 @@
 package co.edu.udea.cmovil.gr5.funbeat.funbeat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,23 +72,54 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
     Button conf;
     ImageView blue;
     ImageView green;
+    TextView combo;
+    TextView vidas;
+    TextView puntos;
+    TextView nivel;
 
     int ticks;
     boolean esperando;
     boolean esperando2;
     boolean esperandoblue;
     boolean esperandoblue2;
+    boolean acierto;
+    boolean sgtnivel = false;
+    int comboint = 1;
+    int vidasint = 3;
+    int puntosint = 0;
+    int nivelint = 1;
+    int tickslvl = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
+    }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ayuda:
+                startActivity(new Intent(this, Ayuda.class));
+                return true;
+            case R.id.creditos:
+                startActivity(new Intent(this, Creditos.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void init() {
         final Timer[] timer = new Timer[2];
-
-
         //inicializacion del soundpool
         final SoundPool mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         final AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -92,11 +127,12 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
         mSoundPoolMap.put(1, mSoundPool.load(this, R.raw.bluefoot, 1));
         mSoundPoolMap.put(2, mSoundPool.load(this, R.raw.snare, 1));
-        mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.jamblock, 1));
+        mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.hihat, 1));
         mSoundPoolMap.put(4, mSoundPool.load(this, R.raw.go, 1));
         mSoundPoolMap.put(5, mSoundPool.load(this, R.raw.meeb, 1));
-
-
+        mSoundPoolMap.put(6, mSoundPool.load(this, R.raw.boo, 1));
+        mSoundPoolMap.put(7, mSoundPool.load(this, R.raw.gameover, 1));
+        mSoundPoolMap.put(8, mSoundPool.load(this, R.raw.hurry, 1));
 
 
         //definicion logica de la gui
@@ -115,6 +151,10 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
         conf = (Button) findViewById(R.id.button6);
         blue = (ImageView) findViewById(R.id.imgblue);
         green = (ImageView) findViewById(R.id.imggreen);
+        combo = (TextView) findViewById(R.id.combotxt);
+        vidas = (TextView) findViewById(R.id.vidastxt);
+        puntos = (TextView) findViewById(R.id.puntostxt);
+        nivel = (TextView) findViewById(R.id.niveltxt);
 
         //para arrastrar el personaje en pantalla
         muestraX = (TextView) findViewById(R.id.textViewX);
@@ -211,68 +251,68 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
         );
 
-            botonMetronomo.setOnClickListener(new View.OnClickListener()
+        botonMetronomo.setOnClickListener(new View.OnClickListener()
 
-                                              {
-                                                  @Override
-                                                  public void onClick(View v) {
+                                          {
+                                              @Override
+                                              public void onClick(View v) {
 
-                                                      if (!isTimerOn) {
-
-
-                                                          //para cambiar la velocidad
-                                                          //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
-                                                          velocidad = 60000 / (Integer.parseInt(velo.getText().toString()));
-
-                                                          muestraMilis.setText("milis: " + velocidad);
+                                                  if (!isTimerOn) {
 
 
-                                                          timer[0] = new Timer();
-                                                          final TimerTask myTask = new TimerTask() {
-                                                              @Override
-                                                              public void run() {
-                                                                  runOnUiThread(new Runnable() {
-                                                                      @Override
-                                                                      public void run() {
-                                                                          //aqui cada segundo
-                                                                          float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                                                          streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                                                      //para cambiar la velocidad
+                                                      //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
+                                                      velocidad = 60000 / (Integer.parseInt(velo.getText().toString()));
 
-                                                                          mSoundPool.stop(0);
-                                                                          mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                      muestraMilis.setText("milis: " + velocidad);
 
-                                                                          penultimoTiempo = ultimotiempo;
-                                                                          ultimotiempo = System.currentTimeMillis();
-                                                                          muestratiempo.setText("" + ultimotiempo);
-                                                                      }
-                                                                  });
-                                                              }
-                                                          };
-                                                          timer[0].scheduleAtFixedRate(myTask, 1000, velocidad);
-                                                          //timer.schedule(myTask, 1000, 1000);
-                                                          isTimerOn = true;
-                                                      } else {
-                                                          timer[0].cancel();
-                                                          isTimerOn = false;
-                                                      }
 
+                                                      timer[0] = new Timer();
+                                                      final TimerTask myTask = new TimerTask() {
+                                                          @Override
+                                                          public void run() {
+                                                              runOnUiThread(new Runnable() {
+                                                                  @Override
+                                                                  public void run() {
+                                                                      //aqui cada segundo
+                                                                      float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                                                      streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+                                                                      mSoundPool.stop(0);
+                                                                      mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+
+                                                                      penultimoTiempo = ultimotiempo;
+                                                                      ultimotiempo = System.currentTimeMillis();
+                                                                      muestratiempo.setText("" + ultimotiempo);
+                                                                  }
+                                                              });
+                                                          }
+                                                      };
+                                                      timer[0].scheduleAtFixedRate(myTask, 1000, velocidad);
+                                                      //timer.schedule(myTask, 1000, 1000);
+                                                      isTimerOn = true;
+                                                  } else {
+                                                      timer[0].cancel();
+                                                      isTimerOn = false;
                                                   }
 
                                               }
 
-            );
+                                          }
 
-            botonBuffer.setOnClickListener(new View.OnClickListener()
+        );
 
-                                           {
-                                               @Override
-                                               public void onClick(View v) {
-                                                   buffer = Integer.parseInt(editBuffer.getText().toString());
-                                               }
+        botonBuffer.setOnClickListener(new View.OnClickListener()
 
+                                       {
+                                           @Override
+                                           public void onClick(View v) {
+                                               buffer = Integer.parseInt(editBuffer.getText().toString());
                                            }
 
-            );
+                                       }
+
+        );
 
         conf.setOnClickListener(new View.OnClickListener()
 
@@ -291,7 +331,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                         editBuffer.setVisibility(View.VISIBLE);
                                         velo.setVisibility(View.VISIBLE);
                                         personaje.setVisibility(View.VISIBLE);
-                                        jugar1.setVisibility(View.INVISIBLE);
+                                        //jugar1.setVisibility(View.INVISIBLE);
                                         conf.setVisibility(View.INVISIBLE);
                                     }
 
@@ -301,118 +341,179 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
 
         jugar1.setOnClickListener(new View.OnClickListener(){
 
-             @Override
-             public void onClick(View v) {
+                                      @Override
+                                      public void onClick(View v) {
 
-                 jugar1.setVisibility(View.INVISIBLE);
-                 conf.setVisibility(View.INVISIBLE);
-                 //boton1.setVisibility(View.VISIBLE);
-                 //boton2.setVisibility(View.VISIBLE);
-                 personaje.setVisibility(View.VISIBLE);
-                 jugar1.setVisibility(View.INVISIBLE);
-                 conf.setVisibility(View.INVISIBLE);
-                 blue.setVisibility(View.VISIBLE);
-                 green.setVisibility(View.VISIBLE);
+                                          jugar1.setVisibility(View.INVISIBLE);
+                                          conf.setVisibility(View.INVISIBLE);
+                                          //boton1.setVisibility(View.VISIBLE);
+                                          //boton2.setVisibility(View.VISIBLE);
+                                          personaje.setVisibility(View.VISIBLE);
+                                          jugar1.setVisibility(View.INVISIBLE);
+                                          conf.setVisibility(View.INVISIBLE);
+                                          blue.setVisibility(View.VISIBLE);
+                                          green.setVisibility(View.VISIBLE);
 
-                 blue.setImageResource(R.drawable.bblue);
-                 green.setImageResource(R.drawable.bgreen);
+                                          boton1.setVisibility(View.INVISIBLE);
+                                          boton2.setVisibility(View.INVISIBLE);
+                                          botonMetronomo.setVisibility(View.INVISIBLE);
+                                          botonBuffer.setVisibility(View.INVISIBLE);
+                                          muestratiempo.setVisibility(View.INVISIBLE);
+                                          tiempoPresion.setVisibility(View.INVISIBLE);
+                                          tiempoMin.setVisibility(View.INVISIBLE);
+                                          tiempoMax.setVisibility(View.INVISIBLE);
+                                          muestraMilis.setVisibility(View.INVISIBLE);
+                                          editBuffer.setVisibility(View.INVISIBLE);
+                                          velo.setVisibility(View.INVISIBLE);
 
+                                          blue.setVisibility(View.VISIBLE);
+                                          green.setVisibility(View.VISIBLE);
+                                          combo.setVisibility(View.VISIBLE);
+                                          vidas.setVisibility(View.VISIBLE);
+                                          puntos.setVisibility(View.VISIBLE);
 
-                 final Integer[] ticksInactivo = {0};
-                 final Random r = new Random();
-                 final int[] r1 = new int[2];
-                 r1[0] = r.nextInt(5 - 2 + 1) + 2;
-                 //int i1 = r.nextInt(max - min + 1) + min;
-
-                 if (!isTimerOn) {
-
-
-                     //para cambiar la velocidad
-                     //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
-                     velocidad = 60000 / (Integer.parseInt(velo.getText().toString()));
-
-                     muestraMilis.setText("milis: " + velocidad);
-
-
-                     timer[0] = new Timer();
-                     final TimerTask myTask = new TimerTask() {
-                         @Override
-                         public void run() {
-                             runOnUiThread(new Runnable() {
-                                 @Override
-                                 public void run() {
-                                     //aqui cada segundo
-                                     ticksInactivo[0]++;
-                                     if(r1[0] == ticksInactivo[0]){
-
-                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-                                         mSoundPool.stop(0);
-                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
-                                         ticksInactivo[0] = 0;
-                                         r1[0] = r.nextInt(5 - 2 + 1) + 2;
-                                         r1[1] = r.nextInt(2 - 1 + 1) + 1;
-
-                                         if(r1[1]==1) {
-                                             personaje.setImageResource(R.drawable.iconogo);
-                                             mSoundPool.stop(0);
-                                             mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
-                                             esperando = true;
-                                             esperando2 = true;
-                                         }else{
-                                             personaje.setImageResource(R.drawable.iconomeep);
-                                             mSoundPool.stop(0);
-                                             mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(5), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
-                                             esperandoblue = true;
-                                             esperandoblue2 = true;
-                                         }
+                                          blue.setImageResource(R.drawable.bblue);
+                                          green.setImageResource(R.drawable.bgreen);
 
 
+                                          final Integer[] ticksInactivo = {0};
+                                          final Random r = new Random();
+                                          final int[] r1 = new int[2];
+                                          r1[0] = r.nextInt(5 - 2 + 1) + 2;
+                                          //int i1 = r.nextInt(max - min + 1) + min;
 
-                                     }else {
-                                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                                         streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-                                         mSoundPool.stop(0);
-                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
-
-                                         //personaje.setImageResource(R.drawable.iconomedio);
-
-                                         if (!esperando2) {
-                                             esperando = false;
-                                         }
-                                         esperando2 = false;
-
-                                         if(!esperandoblue2){
-                                             esperandoblue = false;
-                                         }
-                                         esperandoblue2 = false;
-
-                                     }
+                                          if (!isTimerOn || sgtnivel) {
 
 
-
-                                     penultimoTiempo = ultimotiempo;
-                                     ultimotiempo = System.currentTimeMillis();
-                                     muestratiempo.setText("" + ultimotiempo);
-                                 }
-                             });
-                         }
-                     };
-                     timer[0].scheduleAtFixedRate(myTask, 1000, velocidad);
-                     //timer.schedule(myTask, 1000, 1000);
-                     isTimerOn = true;
-                 } else {
-                     timer[0].cancel();
-                     isTimerOn = false;
-                 }
+                                              //para cambiar la velocidad
+                                              //60,000 ms (1 minute) / Tempo (BPM) = Delay Time in ms for quarter-note beats
 
 
-             
-             }
+                                              velocidad = 60000 / (Integer.parseInt(velo.getText().toString()) + (nivelint * 10));
+                                              muestraMilis.setText("milis: " + velocidad);
 
-         }
+
+                                              timer[0] = new Timer();
+                                              final TimerTask myTask = new TimerTask() {
+                                                  @Override
+                                                  public void run() {
+                                                      runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              //aqui cada segundo
+                                                              float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                                              streamVolume = streamVolume / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+                                                              tickslvl++;
+                                                              if(tickslvl>=50){
+                                                                  nivelint++;
+                                                                  sgtnivel = true;
+                                                                  mSoundPool.stop(0);
+                                                                  mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(8), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                                  nivel.setText("nivel "+nivelint);
+                                                                  timer[0].cancel();
+                                                                  jugar1.setVisibility(View.VISIBLE);
+                                                                  blue.setVisibility(View.INVISIBLE);
+                                                                  green.setVisibility(View.INVISIBLE);
+                                                                  tickslvl = 0;
+
+
+                                                              }
+
+                                                              if (vidasint <= 0){ //GAME OVER
+                                                                  timer[0].cancel();
+                                                                  mSoundPool.stop(0);
+                                                                  mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(7), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                                  ponerInvisibles();
+                                                                  jugar1.setVisibility(View.VISIBLE);
+                                                                  conf.setVisibility(View.VISIBLE);
+                                                                  isTimerOn = false;
+                                                                  vidasint = 3;
+                                                                  comboint = 1;
+                                                                  puntosint = 0;
+                                                                  nivelint =1;
+                                                                  nivel.setText("nivel " + nivelint);
+
+                                                              }
+                                                              ticksInactivo[0]++;
+                                                              if(r1[0] == ticksInactivo[0]){
+
+
+
+                                                                  mSoundPool.stop(0);
+                                                                  mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                                  ticksInactivo[0] = 0;
+                                                                  r1[0] = r.nextInt(4 - 2 + 1) + 2;
+                                                                  r1[1] = r.nextInt(2 - 1 + 1) + 1;
+
+                                                                  if(r1[1]==1) {
+                                                                      personaje.setImageResource(R.drawable.iconogo);
+                                                                      mSoundPool.stop(0);
+                                                                      mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(4), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                                      esperando = true;
+                                                                      esperando2 = true;
+                                                                      green.setImageResource(R.drawable.bblack);
+
+                                                                  }else{
+                                                                      personaje.setImageResource(R.drawable.iconomeep);
+                                                                      mSoundPool.stop(0);
+                                                                      mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(5), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                                      esperandoblue = true;
+                                                                      esperandoblue2 = true;
+                                                                      blue.setImageResource(R.drawable.bblack);
+                                                                  }
+
+
+
+                                                              }else {
+
+                                                                  mSoundPool.stop(0);
+                                                                  mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(3), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+
+                                                                  //personaje.setImageResource(R.drawable.iconomedio);
+                                                                  if(!esperando2 && !esperandoblue2 && (esperando || esperandoblue ) && !acierto){
+                                                                      vidasint--;
+                                                                      vidas.setText(""+vidasint);
+                                                                  }
+                                                                  if (!esperando2) {
+                                                                      esperando = false;
+                                                                  }
+                                                                  esperando2 = false;
+
+                                                                  if(!esperandoblue2){
+                                                                      esperandoblue = false;
+                                                                  }
+                                                                  esperandoblue2 = false;
+
+                                                                  green.setImageResource(R.drawable.bgreen);
+                                                                  blue.setImageResource(R.drawable.bblue);
+
+                                                              }
+
+
+
+                                                              penultimoTiempo = ultimotiempo;
+                                                              ultimotiempo = System.currentTimeMillis();
+                                                              muestratiempo.setText("" + ultimotiempo);
+                                                          }
+                                                      });
+                                                  }
+                                              };
+                                              timer[0].scheduleAtFixedRate(myTask, 1000, velocidad);
+                                              //timer.schedule(myTask, 1000, 1000);
+                                              isTimerOn = true;
+                                          } else {
+
+                                              timer[0].cancel();
+                                              isTimerOn = false;
+
+                                          }
+
+
+
+                                      }
+
+                                  }
         );
 
         blue.setOnTouchListener(new View.OnTouchListener() {
@@ -422,6 +523,9 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // PRESSED
+
+
+
 
                         blue.setImageResource(R.drawable.byellow);
                         float streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -437,15 +541,30 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperandoblue) {
                             //acierto
                             personaje.setImageResource(R.drawable.icono);
+                            comboint++;
+                            acierto = true;
+                            puntosint = puntosint + (comboint*10);
                         } else {
                             if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperandoblue) {
                                 personaje.setImageResource(R.drawable.icono);
+                                comboint++;
+                                acierto = true;
+                                puntosint = puntosint + (comboint*10);
                             } else {
                                 //fallo
                                 personaje.setImageResource(R.drawable.iconotriste);
+
+                                mSoundPool.stop(0);
+                                mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                comboint = 0;
+                                //vidasint--;
+                                acierto = false;
+
                             }
                         }
-
+                        combo.setText("x" + comboint);
+                        vidas.setText("" + vidasint);
+                        puntos.setText("" + puntosint);
 
                         return true; // if you want to handle the touch event
                     case MotionEvent.ACTION_UP:
@@ -479,14 +598,30 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                                  if (System.currentTimeMillis() > ultimotiempo + velocidad - buffer && System.currentTimeMillis() < ultimotiempo + velocidad + buffer && esperando) {
                                                      //acierto
                                                      personaje.setImageResource(R.drawable.icono2);
+                                                     comboint++;
+                                                     acierto = true;
+                                                     puntosint = puntosint + (comboint*10);
                                                  } else {
                                                      if (System.currentTimeMillis() > penultimoTiempo + velocidad - buffer && System.currentTimeMillis() < penultimoTiempo + velocidad + buffer && esperando) {
                                                          personaje.setImageResource(R.drawable.icono2);
+                                                         comboint++;
+                                                         acierto = true;
+                                                         puntosint = puntosint + (comboint*10);
                                                      } else {
                                                          //fallo
                                                          personaje.setImageResource(R.drawable.iconotriste);
+
+                                                         mSoundPool.stop(0);
+                                                         mStream2 = mSoundPool.play((Integer) mSoundPoolMap.get(6), streamVolume, streamVolume, 1, LOOP_1_TIME, 1f);
+                                                         comboint = 0;
+                                                         // vidasint--;
+                                                         acierto = false;
                                                      }
                                                  }
+                                                 combo.setText("x" + comboint);
+                                                 vidas.setText("" + vidasint);
+                                                 puntos.setText("" + puntosint);
+
                                                  return true; // if you want to handle the touch event
                                              case MotionEvent.ACTION_UP:
                                                  // RELEASED
@@ -508,13 +643,13 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                         final int Y = (int) event.getRawY();
                         switch (event.getAction() & MotionEvent.ACTION_MASK) {
                             case MotionEvent.ACTION_DOWN:
-                                RelativeLayout.LayoutParams lParams = (
-                                        RelativeLayout.LayoutParams) view.getLayoutParams();
+                                RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                                 _xDelta = X - lParams.leftMargin;
                                 _yDelta = Y - lParams.topMargin;
                                 personaje.setImageResource(R.drawable.iconoo);
                                 ticks = 0;
                                 timer[1] = new Timer();
+
                                 final TimerTask myTask2 = new TimerTask() {
                                     @Override
                                     public void run() {
@@ -536,10 +671,26 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                                 };
                                 timer[1].schedule(myTask2, 100, 100);
 
+
                                 break;
+
                             case MotionEvent.ACTION_MOVE:
-                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                                        .getLayoutParams();
+                                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+                                if (X < 120) {
+                                    //_xDelta = 120 - layoutParams.leftMargin;
+                                    //timer[1].cancel();
+                                    personaje.setImageResource(R.drawable.paredizq);
+
+                                } else {
+                                    if (Y < 200) {
+                                        // _yDelta = Y - layoutParams.topMargin;
+                                        //timer[1].cancel();
+                                        personaje.setImageResource(R.drawable.paredarr);
+
+                                    }
+                                }
+
                                 layoutParams.leftMargin = X - _xDelta;
                                 layoutParams.topMargin = Y - _yDelta;
                                 layoutParams.rightMargin = -250;
@@ -551,7 +702,6 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                             case MotionEvent.ACTION_UP:
                                 timer[1].cancel();
                                 personaje.setImageResource(R.drawable.iconoidle);
-
                                 break;
                         }
                         mRrootLayout.invalidate();
@@ -560,43 +710,32 @@ public class MainActivity extends AppCompatActivity /*implements View.OnTouchLis
                 }
         );
 
+    }
+
+    private void ponerInvisibles(){
+        boton1.setVisibility(View.INVISIBLE);
+        boton2.setVisibility(View.INVISIBLE);
+        botonMetronomo.setVisibility(View.INVISIBLE);
+        botonBuffer.setVisibility(View.INVISIBLE);
+        muestratiempo.setVisibility(View.INVISIBLE);
+        tiempoPresion.setVisibility(View.INVISIBLE);
+        tiempoMin.setVisibility(View.INVISIBLE);
+        tiempoMax.setVisibility(View.INVISIBLE);
+        muestraMilis.setVisibility(View.INVISIBLE);
+        velo.setVisibility(View.INVISIBLE);
+//        editBuffer.setVisibility(View.INVISIBLE);
+
+
+        blue.setVisibility(View.INVISIBLE);
+        green.setVisibility(View.INVISIBLE);
+        combo.setVisibility(View.INVISIBLE);
+        vidas.setVisibility(View.INVISIBLE);
+        puntos.setVisibility(View.INVISIBLE);
 
 
     }
 
 
-/*
-    public boolean onTouch(View view, MotionEvent event){
-        final int X = (int) event.getRawX();
-        final int Y = (int) event.getRawY();
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                RelativeLayout1.LayoutParams lParams = (
-                        RelativeLayout.LayoutParams) view.getLayoutParams();
-                _xDelta = X - lParams.leftMargin;
-                _yDelta = Y - lParams.topMargin;
-                personaje.setImageResource(R.drawable.iconoo);
 
-                break;
-            case MotionEvent.ACTION_MOVE:
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                        .getLayoutParams();
-                layoutParams.leftMargin = X - _xDelta;
-                layoutParams.topMargin = Y - _yDelta;
-                layoutParams.rightMargin = -250;
-                layoutParams.bottomMargin = -250;
-                view.setLayoutParams(layoutParams);
-                muestraX.setText("X= "+ X);
-                muestraY.setText("Y= "+ Y);
-                break;
-            case MotionEvent.ACTION_UP:
-                personaje.setImageResource(R.drawable.iconoidle);
-                break;
-        }
-        mRrootLayout.invalidate();
-        return true;
-    }
-    */
-
-    }
+}
 
